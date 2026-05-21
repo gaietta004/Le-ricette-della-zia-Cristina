@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CIAO Hand Animation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0d0d0d;
+      color: #fff;
+      font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+    }
+    .camera-container {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 320px;
+      height: 240px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.15);
+      z-index: 10;
+    }
+    .camera-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+    .camera-container canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: scaleX(-1);
+    }
+    .word {
+      position: fixed;
+      left: 0;
+      top: 0;
+    }
+    .letter {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      font-size: 8rem;
+      line-height: 1;
+      transform-origin: center center;
+    }
+    .status {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="camera-container">
+    <video id="video" playsinline></video>
+    <canvas id="overlay"></canvas>
+  </div>
+
+  <div class="word" id="word1">
+    <span class="letter" data-i="0">C</span>
+    <span class="letter" data-i="1">I</span>
+    <span class="letter" data-i="2">A</span>
+    <span class="letter" data-i="3">O</span>
+  </div>
+
+  <div class="word" id="word2">
+    <span class="letter" data-i="0">C</span>
+    <span class="letter" data-i="1">I</span>
+    <span class="letter" data-i="2">A</span>
+    <span class="letter" data-i="3">O</span>
+  </div>
+
+  <div class="status" id="status">Loading camera...</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+          crossorigin="anonymous"></script>
+
+  <script>
+(async function() {
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('overlay');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 640;
+  canvas.height = 480;
+  const status = document.getElementById('status');
+
+  function makeHand(wordId, baseYOffset) {
+    const letters = document.querySelectorAll(`#${wordId} .letter`);
+    return {
+      letters,
+      baseYOffset,
+      state: {
+        smoothSpeed: 0,
+        smoothOpenness: 0,
+        smoothStretch: 1,
+        letterPositions: [
+          { x: 0, y: 0 },
+          { x: 0, y: 0 },
+          { x: 0, y: 0 },
+          { x: 0, y: 0 },
+        ],
+        lastWrist: null,
+      },
+    };
+  }
+
+  const hands = [
+    makeHand('word1', 0),
+    makeHand('word2', 200),
+  ];
+
+  const LETTER_MAP = [4, 8, 12, 16];
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+  }
+
+  function dist(a, b) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    const dz = a.z - b.z;
+    return Math.sqrt(dx*dx + dy*dy + dz*dz);
+  }
+
+  const BASE_SPACING = 120;
+  const EDGE_MARGIN = 150;
+  const SPEED_THRESHOLD = 0.3;
+
+  function processHand(lm, hand) {
+    const st = hand.state;
+
+    if (st.lastWrist) {
+      const dx = lm[0].x - st.lastWrist.x;
+      const dy = lm[0].y - st.lastWrist.y;
+      const speed = Math.sqrt(dx*dx + dy*dy) * 30;
+      st.smoothSpeed = lerp(st.smoothSpeed, Math.min(5, speed), 0.2);
+    }
+    st.lastWrist = { x: lm[0].x, y: lm[0].y };
+
+    const d1 = dist(lm[4], lm[6]);
+    const d2 = dist(lm[8], lm[9]);
+    const d3 = dist(lm[12], lm[13]);
+    const d4 = dist(lm[16], lm[17]);
+    const d5 = dist(lm[20], lm[17]);
+    const avg = (d1 + d2 + d3 + d4 + d5) / 5;
+
+    const MIN_DIST = 0.02;
+    const MAX_DIST = 0.14;
+    const clamped = Math.max(0, Math.min(1, (avg - MIN_DIST) / (MAX_DIST - MIN_DIST)));
+    st.smoothOpenness = lerp(st.smoothOpenness, clamped, 0.2);
+    st.smoothStretch = lerp(st.smoothStretch, 1 + clamped * 2, 0.7);
+
+    const moveBlend = clamp(st.smoothSpeed / SPEED_THRESHOLD, 0, 1);
+    const limitX = window.innerWidth / 2 - EDGE_MARGIN;
+    const limitY = window.innerHeight / 2 - EDGE_MARGIN;
+
+    LETTER_MAP.forEach((tipId, i) => {
+      const tip = lm[tipId];
+      const tX = clamp((0.5 - tip.x) * window.innerWidth, -limitX, limitX);
+      const tY = clamp((tip.y - 0.5) * window.innerHeight, -limitY, limitY);
+      const baseX = (i - 1.5) * BASE_SPACING;
+      const baseY = hand.baseYOffset;
+      const blendOpen = st.smoothOpenness * moveBlend;
+      const px = lerp(baseX, tX, blendOpen);
+      const py = lerp(baseY, tY, blendOpen);
+      st.letterPositions[i].x = lerp(st.letterPositions[i].x, px, 0.35);
+      st.letterPositions[i].y = lerp(st.letterPositions[i].y, py, 0.35);
+    });
+  }
+
+  function decayHand(hand) {
+    const st = hand.state;
+    st.smoothSpeed = lerp(st.smoothSpeed, 0, 0.05);
+    st.smoothOpenness = lerp(st.smoothOpenness, 0, 0.05);
+    st.smoothStretch = lerp(st.smoothStretch, 1, 0.7);
+    st.lastWrist = null;
+    st.letterPositions.forEach((p) => {
+      p.x = lerp(p.x, 0, 0.08);
+      p.y = lerp(p.y, hand.baseYOffset, 0.08);
+    });
+  }
+
+  function onResults(results) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (results.multiHandLandmarks) {
+      const count = Math.min(results.multiHandLandmarks.length, 2);
+      for (let h = 0; h < count; h++) {
+        const lm = results.multiHandLandmarks[h];
+        drawConnectors(ctx, lm, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 1 });
+        drawLandmarks(ctx, lm, { color: '#FF0000', lineWidth: 1 });
+        processHand(lm, hands[h]);
+      }
+      for (let h = count; h < 2; h++) {
+        decayHand(hands[h]);
+      }
+      status.textContent = count + ' hand' + (count > 1 ? 's' : '') + ' detected';
+    } else {
+      hands.forEach(decayHand);
+      status.textContent = 'No hand detected';
+    }
+  }
+
+  const startTime = performance.now();
+
+  function animate(time) {
+    const elapsed = (time - startTime) / 1000;
+
+    hands.forEach((hand) => {
+      const st = hand.state;
+      const oscAngle = Math.sin(elapsed * st.smoothSpeed) * 45;
+
+      hand.letters.forEach((letter, i) => {
+        const pos = st.letterPositions[i];
+        letter.style.transform =
+          `translate(calc(-50% + ${pos.x}px), calc(-50% + ${pos.y}px)) rotate(${oscAngle}deg) scaleY(${st.smoothStretch})`;
+      });
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+
+  const handsInst = new Hands({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+  });
+
+  handsInst.setOptions({
+    maxNumHands: 2,
+    modelComplexity: 1,
+    minDetectionConfidence: 0.7,
+    minTrackingConfidence: 0.5,
+  });
+
+  handsInst.onResults(onResults);
+
+  const camera = new Camera(video, {
+    onFrame: async () => {
+      await handsInst.send({ image: video });
+    },
+    width: 640,
+    height: 480,
+  });
+
+  try {
+    await camera.start();
+    status.textContent = 'Camera ready — show your hand(s)';
+  } catch (err) {
+    status.textContent = 'Camera permission denied';
+  }
+})();
+  </script>
+</body>
+</html>

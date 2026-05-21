@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAIA PATTI — SITO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Zalando+Sans+Expanded:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #f0eded;
+      color: #1f0001;
+      font-family: 'Zalando Sans Expanded', sans-serif;
+      font-weight: 500;
+      font-size: 22px;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    h1 {
+      font-family: 'Zalando Sans Expanded', sans-serif;
+      font-weight: 400;
+      font-size: 30px;
+
+    }
+    h2 {
+      font-family: 'Zalando Sans Expanded', sans-serif;
+      font-weight: 300;
+      font-size: 60px;
+     text-align: left;
+
+    }
+    .caption {
+      font-family: 'VT323', monospace;
+      font-weight: 200;
+      font-size: 16px;
+    }
+
+    /* Header */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: #f0eded;
+      padding: 20px 40px;
+      border-bottom: 1px solid rgba(31,0,1,0.1);
+    }
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .site-nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    .site-nav > a, .dropdown-trigger {
+      font-size: 16px;
+      font-weight: 400;
+    }
+    .site-nav > a:hover, .dropdown-trigger:hover {
+      text-decoration: underline;
+    }
+    .dropdown {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f0eded;
+      border: 1px solid rgba(31,0,1,0.1);
+      min-width: 220px;
+      padding: 8px 0;
+      z-index: 200;
+    }
+    .dropdown-menu.open { display: block; }
+    .dropdown-menu a {
+      display: block;
+      padding: 8px 16px;
+      font-size: 14px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .dropdown-menu a:hover {
+      background: rgba(31,0,1,0.05);
+      text-decoration: underline;
+    }
+
+    /* Sticker Canvas */
+    .sticker-canvas {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      margin-top: 80px;
+      overflow: hidden;
+    }
+    .sticker {
+      position: absolute;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      transition: transform 0.3s ease;
+      cursor: grab;
+    }
+    .sticker:active { cursor: grabbing; }
+    .sticker:hover { transform: scale(1.05); }
+    .sticker .label {
+      font-weight: 500;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+    .sticker .caption {
+      font-family: 'VT323', monospace;
+      font-weight: 200;
+      font-size: 16px;
+    }
+    .sticker .caption:hover { text-decoration: underline; }
+
+    /* Sticker 1 — YOU HUNGRY? */
+    .sticker-1 {
+      width: 260px;
+      height: 180px;
+      background: #f58a3d;
+      color: #f2f26b;
+      top: 12%;
+      left: 8%;
+      transform: rotate(-5deg);
+      clip-path: polygon(
+        2% 2%, 5% 8%, 10% 3%, 14% 10%, 19% 4%, 24% 11%, 29% 5%,
+        34% 12%, 39% 4%, 44% 10%, 49% 5%, 54% 12%, 59% 4%,
+        64% 11%, 69% 5%, 74% 12%, 79% 4%, 84% 10%, 89% 5%,
+        94% 10%, 98% 5%, 98% 15%, 95% 20%, 98% 25%, 95% 30%,
+        98% 35%, 95% 40%, 98% 45%, 95% 50%, 98% 55%, 95% 60%,
+        98% 65%, 95% 70%, 98% 75%, 95% 80%, 98% 85%, 95% 90%,
+        98% 95%, 94% 98%, 89% 94%, 84% 98%, 79% 94%, 74% 98%,
+        69% 94%, 64% 98%, 59% 94%, 54% 98%, 49% 94%, 44% 98%,
+        39% 94%, 34% 98%, 29% 94%, 24% 98%, 19% 94%, 14% 98%,
+        9% 94%, 5% 98%, 2% 94%, 5% 90%, 2% 85%, 5% 80%,
+        2% 75%, 5% 70%, 2% 65%, 5% 60%, 2% 55%, 5% 50%,
+        2% 45%, 5% 40%, 2% 35%, 5% 30%, 2% 25%, 5% 20%,
+        2% 15%, 5% 10%
+      );
+      border-radius: 10px;
+    }
+    .sticker-1:hover { transform: rotate(-5deg) scale(1.05); }
+
+    /* Sticker 2 — HELLO HANDS */
+    .sticker-2 {
+      width: 240px;
+      height: 200px;
+      background: #f2f26b;
+      color: #f58a3d;
+      top: 8%;
+      right: 10%;
+      clip-path: path('M120,0 C140,0 160,20 160,40 C180,30 200,40 210,60 C220,80 210,100 200,110 C220,120 230,140 220,160 C210,180 190,190 170,195 C160,200 140,200 120,200 C100,200 80,200 70,195 C50,190 30,180 20,160 C10,140 20,120 40,110 C30,100 20,80 30,60 C40,40 60,30 80,40 C80,20 100,0 120,0 Z');
+    }
+
+    /* Hero H2 */
+    .hero-h2 {
+      position: absolute;
+      font-size: 100px;
+      top: 15%;
+      left: 40%;
+      transform: translateX(-50%);
+      text-align: left;
+      z-index: 0;
+      line-height: 1.1;
+      max-width: 90%;
+      pointer-events: none;
+    }
+
+    /* Sticker 3 — SAY HI */
+    .sticker-3 {
+      width: 220px;
+      height: 220px;
+      background: #ff5ec1;
+      color: #50e664;
+      top: calc(55% - 110px);
+      left: calc(50% - 110px);
+      z-index: 10;
+      clip-path: polygon(
+        50% 0%, 56% 18%, 75% 5%, 68% 24%, 88% 15%,
+        78% 33%, 98% 30%, 85% 45%, 100% 50%, 85% 55%,
+        98% 70%, 78% 67%, 88% 85%, 68% 76%, 75% 95%,
+        56% 82%, 50% 100%, 44% 82%, 25% 95%, 32% 76%,
+        12% 85%, 22% 67%, 2% 70%, 15% 55%, 0% 50%,
+        15% 45%, 2% 30%, 22% 33%, 12% 15%, 32% 24%,
+        25% 5%, 44% 18%
+      );
+    }
+    .sticker-3:hover { transform: scale(1.05); }
+
+    /* Sticker 4 — LET PALLINO SPEAK UP */
+    .sticker-4 {
+      width: 220px;
+      height: 220px;
+      background: #50e664;
+      color: #ff5ec1;
+      bottom: 10%;
+      left: 8%;
+      border-radius: 50%;
+    }
+
+    /* Sticker 5 — MORPH YOUR PATTERN */
+    .sticker-5 {
+      width: 260px;
+      height: 180px;
+      background: #f58a3d;
+      color: #f2f26b;
+      bottom: 8%;
+      right: 8%;
+      transform: rotate(4deg);
+      clip-path: polygon(
+        2% 2%, 5% 8%, 10% 3%, 14% 10%, 19% 4%, 24% 11%, 29% 5%,
+        34% 12%, 39% 4%, 44% 10%, 49% 5%, 54% 12%, 59% 4%,
+        64% 11%, 69% 5%, 74% 12%, 79% 4%, 84% 10%, 89% 5%,
+        94% 10%, 98% 5%, 98% 15%, 95% 20%, 98% 25%, 95% 30%,
+        98% 35%, 95% 40%, 98% 45%, 95% 50%, 98% 55%, 95% 60%,
+        98% 65%, 95% 70%, 98% 75%, 95% 80%, 98% 85%, 95% 90%,
+        98% 95%, 94% 98%, 89% 94%, 84% 98%, 79% 94%, 74% 98%,
+        69% 94%, 64% 98%, 59% 94%, 54% 98%, 49% 94%, 44% 98%,
+        39% 94%, 34% 98%, 29% 94%, 24% 98%, 19% 94%, 14% 98%,
+        9% 94%, 5% 98%, 2% 94%, 5% 90%, 2% 85%, 5% 80%,
+        2% 75%, 5% 70%, 2% 65%, 5% 60%, 2% 55%, 5% 50%,
+        2% 45%, 5% 40%, 2% 35%, 5% 30%, 2% 25%, 5% 20%,
+        2% 15%, 5% 10%
+      );
+      border-radius: 10px;
+    }
+    .sticker-5:hover { transform: rotate(4deg) scale(1.05); }
+
+    /* About Section */
+    .about-section {
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+      background: #f0eded;
+    }
+    .about-inner {
+      max-width: 600px;
+      text-align: left;
+    }
+    .about-inner > p {
+      font-size: 22px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+    .info-columns {
+      display: flex;
+      gap: 40px;
+      justify-content: space-between;
+      text-align: left;
+    }
+    .info-col {
+      flex: 1;
+    }
+    .info-col .caption {
+      font-family: 'VT323', monospace;
+      font-weight: 200;
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .site-footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      background: #f0eded;
+      border-top: 1px solid rgba(31,0,1,0.1);
+    }
+    .footer-text {
+      font-family: 'VT323', monospace;
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <h1><a href="#sticker-canvas">GAIA PATTI</a></h1>
+      <nav class="site-nav">
+        <a href="#about">about</a>
+        <div class="dropdown">
+          <a href="#" class="dropdown-trigger" id="projects-trigger">projects</a>
+          <div class="dropdown-menu" id="projects-menu">
+            <a href="ciambella yougurt_ricetta 1/index.html" target="_blank">YOU HUNGRY?</a>
+            <a href="HANDTRACKING 1/index.html" target="_blank">HELLO HANDS</a>
+            <a href="TIPOGRAFIA CINETICA 1/index.html" target="_blank">SAY HI</a>
+            <a href="MASCHERA SONORA 1/index.html" target="_blank">LET PALLINO SPEAK UP</a>
+            <a href="PATTERN exercise 1/index.html" target="_blank">MORPH YOUR PATTERN</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section id="sticker-canvas" class="sticker-canvas">
+    <h2 class="hero-h2">LLM, coding explorations of a curious graphic designer</h2>
+    <a href="ciambella yougurt_ricetta 1/index.html" target="_blank" class="sticker sticker-1">
+      <span class="label">YOU HUNGRY?</span>
+      <span class="caption">click here</span>
+    </a>
+    <a href="HANDTRACKING 1/index.html" target="_blank" class="sticker sticker-2">
+      <span class="label">HELLO<br>HANDS</span>
+      <span class="caption">click here</span>
+    </a>
+    <a href="TIPOGRAFIA CINETICA 1/index.html" target="_blank" class="sticker sticker-3">
+      <span class="label">SAY HI</span>
+      <span class="caption">click here</span>
+    </a>
+    <a href="MASCHERA SONORA 1/index.html" target="_blank" class="sticker sticker-4">
+      <span class="label">LET PALLINO<br>SPEAK UP</span>
+      <span class="caption">click here</span>
+    </a>
+    <a href="PATTERN exercise 1/index.html" target="_blank" class="sticker sticker-5">
+      <span class="label">MORPH YOUR PATTERN</span>
+      <span class="caption">click here</span>
+    </a>
+  </section>
+
+  <section id="about" class="about-section">
+    <div class="about-inner">
+      <p>This website collects a series of experimental projects exploring the intersection of graphic design, creative coding, and artificial intelligence. Each project investigates a different interaction modality — from hand tracking to typography, sound visualization to pattern generation — using code as a design material.</p>
+      <div class="info-columns">
+        <div class="info-col">
+          <p class="caption">Sito sviluppato durante il workshop "No brain, No Gain",<br>
+          tenuto da whateverDev (Andrea Maffei & Rocco Lorenzo Modugno),<br>
+          18-22 Maggio 2026, all'interno dei corsi:</p>
+        </div>
+        <div class="info-col">
+          <p class="caption">Interaction Design 2<br>
+          Prof. Alessia Scudieri</p>
+          <p class="caption">Interaction Design 3<br>
+          Prof. Andrea Leonardi<br>
+          Prof. Marcantonio D'Antoni</p>
+        </div>
+        <div class="info-col">
+          <p class="caption">ABADIR<br>
+          Accademia di Design e Comunicazione Visiva<br>
+          Sant'Agata li Battiati CT<br>
+          AA 2025-26</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer class="site-footer">
+    <span class="footer-text">STAY CURIOUS</span>
+  </footer>
+<script>
+  document.querySelectorAll('.sticker').forEach(function(sticker) {
+    var isDragging = false;
+    var startX, startY, origLeft, origTop;
+    var dragged = false;
+
+    function getClientXY(e) {
+      if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
+    }
+
+    function initPos() {
+      var cs = getComputedStyle(sticker);
+      var l = parseFloat(cs.left);
+      var t = parseFloat(cs.top);
+      if (!isNaN(l)) { origLeft = l; } else { origLeft = sticker.offsetLeft; }
+      if (!isNaN(t)) { origTop = t; } else { origTop = sticker.offsetTop; }
+    }
+
+    function onStart(e) {
+      dragged = false;
+      var client = getClientXY(e);
+      startX = client.x;
+      startY = client.y;
+      initPos();
+      sticker.style.cursor = 'grabbing';
+      isDragging = true;
+    }
+
+    function onMove(e) {
+      if (!isDragging) return;
+      var client = getClientXY(e);
+      var dx = client.x - startX;
+      var dy = client.y - startY;
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) dragged = true;
+      if (dragged) {
+        e.preventDefault();
+        sticker.style.left = (origLeft + dx) + 'px';
+        sticker.style.top = (origTop + dy) + 'px';
+        sticker.style.right = 'auto';
+        sticker.style.bottom = 'auto';
+      }
+    }
+
+    function onEnd() {
+      isDragging = false;
+      sticker.style.cursor = '';
+    }
+
+    sticker.addEventListener('mousedown', onStart);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onEnd);
+
+    sticker.addEventListener('touchstart', onStart, { passive: true });
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onEnd);
+
+    sticker.addEventListener('click', function(e) {
+      if (dragged) e.preventDefault();
+    });
+  });
+
+  var trigger = document.getElementById('projects-trigger');
+  var menu = document.getElementById('projects-menu');
+  if (trigger && menu) {
+    trigger.addEventListener('click', function(e) {
+      e.preventDefault();
+      menu.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e) {
+      if (!trigger.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>

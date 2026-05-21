@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIAO — Kinetic Typography</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #app {
+      text-align: center;
+    }
+
+    #word {
+      font-size: 8rem;
+      letter-spacing: 0.1em;
+      user-select: none;
+    }
+
+    #word span {
+      display: inline-block;
+    }
+
+    #controls {
+      position: fixed;
+      top: 50%;
+      left: 1.5rem;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    #controls label {
+      font-family: Arial, sans-serif;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      width: 180px;
+    }
+
+    #controls input[type="range"] {
+      width: 100%;
+    }
+
+    #controls span {
+      font-family: monospace;
+      text-align: right;
+    }
+
+    #goodbye-btn {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      font-family: Arial, sans-serif;
+      background: #444;
+      color: #fff;
+      border: 1px solid #666;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #goodbye-btn:hover {
+      background: #666;
+    }
+
+    #restart-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-family: Arial, sans-serif;
+      background: #444;
+      color: #fff;
+      border: 1px solid #666;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #restart-btn:hover {
+      background: #666;
+    }
+
+    #say-hi-btn {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+      transition: opacity 0.3s;
+      text-align: center;
+    }
+
+    #say-hi-btn .hand {
+      display: inline-block;
+      font-size: 6rem;
+      line-height: 1;
+      animation: wave 1s ease-in-out infinite;
+    }
+
+    #say-hi-btn .label {
+      display: block;
+      font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+      font-size: 1.5rem;
+      color: #fff;
+      margin-top: 0.5rem;
+    }
+
+    #say-hi-btn:hover .hand {
+      animation-duration: 0.6s;
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: rotate(-15deg); }
+      50% { transform: rotate(15deg); }
+    }
+
+    #say-hi-btn.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <button id="restart-btn">Restart</button>
+  <button id="say-hi-btn">
+    <span class="hand">👋</span>
+    <span class="label">hi !!</span>
+  </button>
+  <button id="goodbye-btn">Goodbye</button>
+  <div id="controls">
+    <label>
+      Speed
+      <input type="range" id="speed" min="0.5" max="5.0" step="0.1" value="2">
+      <span id="speed-value">2.0</span>
+    </label>
+    <label>
+      Min Angle
+      <input type="range" id="minAngle" min="-90" max="0" step="1" value="-45">
+      <span id="minAngle-value">-45°</span>
+    </label>
+    <label>
+      Max Angle
+      <input type="range" id="maxAngle" min="0" max="90" step="1" value="45">
+      <span id="maxAngle-value">45°</span>
+    </label>
+    <label>
+      Stretch Amount
+      <input type="range" id="stretchAmount" min="1" max="3" step="0.1" value="2">
+      <span id="stretchAmount-value">2.0x</span>
+    </label>
+    <label>
+      Stretch Speed
+      <input type="range" id="stretchSpeed" min="0.5" max="5.0" step="0.1" value="2">
+      <span id="stretchSpeed-value">2.0</span>
+    </label>
+  </div>
+  <div id="app">
+    <div id="word">
+      <span>C</span>
+      <span>I</span>
+      <span>A</span>
+      <span>O</span>
+    </div>
+  </div>
+  <script>
+    const state = {
+      speed: 2,
+      minAngle: -45,
+      maxAngle: 45,
+      stretchAmount: 2,
+      stretchSpeed: 2
+    };
+
+    let started = false;
+    let popTime = null;
+    let exitTime = null;
+    const POP_DURATION = 0.25;
+    const EXIT_WINDUP = 0.25;
+
+    const letters = document.querySelectorAll('#word span');
+    const sayHiBtn = document.getElementById('say-hi-btn');
+    const speedInput = document.getElementById('speed');
+    const speedValue = document.getElementById('speed-value');
+    const minAngleInput = document.getElementById('minAngle');
+    const minAngleValue = document.getElementById('minAngle-value');
+    const maxAngleInput = document.getElementById('maxAngle');
+    const maxAngleValue = document.getElementById('maxAngle-value');
+    const stretchAmountInput = document.getElementById('stretchAmount');
+    const stretchAmountValue = document.getElementById('stretchAmount-value');
+    const stretchSpeedInput = document.getElementById('stretchSpeed');
+    const stretchSpeedValue = document.getElementById('stretchSpeed-value');
+    const goodbyeBtn = document.getElementById('goodbye-btn');
+    const restartBtn = document.getElementById('restart-btn');
+
+    letters.forEach(l => { l.style.opacity = '0'; });
+
+    sayHiBtn.addEventListener('click', () => {
+      started = true;
+      popTime = performance.now() / 1000;
+      sayHiBtn.classList.add('hidden');
+    });
+
+    speedInput.addEventListener('input', () => {
+      state.speed = parseFloat(speedInput.value);
+      speedValue.textContent = state.speed.toFixed(1);
+    });
+
+    minAngleInput.addEventListener('input', () => {
+      state.minAngle = parseInt(minAngleInput.value, 10);
+      minAngleValue.textContent = state.minAngle + '\u00B0';
+    });
+
+    maxAngleInput.addEventListener('input', () => {
+      state.maxAngle = parseInt(maxAngleInput.value, 10);
+      maxAngleValue.textContent = state.maxAngle + '\u00B0';
+    });
+
+    stretchAmountInput.addEventListener('input', () => {
+      state.stretchAmount = parseFloat(stretchAmountInput.value);
+      stretchAmountValue.textContent = state.stretchAmount.toFixed(1) + 'x';
+    });
+
+    stretchSpeedInput.addEventListener('input', () => {
+      state.stretchSpeed = parseFloat(stretchSpeedInput.value);
+      stretchSpeedValue.textContent = state.stretchSpeed.toFixed(1);
+    });
+
+    goodbyeBtn.addEventListener('click', () => {
+      if (exitTime === null) {
+        exitTime = performance.now() / 1000;
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      exitTime = null;
+      started = false;
+      popTime = null;
+      sayHiBtn.classList.remove('hidden');
+      letters.forEach(l => {
+        l.style.opacity = '0';
+        l.style.transform = '';
+      });
+    });
+
+    function lerp(t, a, b) {
+      return a + (t + 1) * 0.5 * (b - a);
+    }
+
+    function easeOutQuad(t) {
+      return t * (2 - t);
+    }
+
+    function animate(time) {
+      const elapsed = time / 1000;
+
+      if (!started) {
+        requestAnimationFrame(animate);
+        return;
+      }
+
+      if (exitTime !== null) {
+        const exitElapsed = elapsed - exitTime;
+
+        if (exitElapsed < EXIT_WINDUP) {
+          const t = easeOutQuad(exitElapsed / EXIT_WINDUP);
+          const angle = -20 * t;
+          letters.forEach((l, i) => {
+            l.style.transform = 'rotate(' + angle + 'deg)';
+          });
+        } else {
+          const shiftT = (exitElapsed - EXIT_WINDUP) * 600;
+          const rotT = Math.min((exitElapsed - EXIT_WINDUP) / 0.3, 1);
+          const angle = -20 + (45 + 20) * rotT;
+          letters.forEach((l, i) => {
+            l.style.transform = 'translateX(' + (shiftT + i * 40) + 'px) rotate(' + angle + 'deg)';
+          });
+        }
+      } else if (popTime !== null && elapsed - popTime < POP_DURATION) {
+        const t = (elapsed - popTime) / POP_DURATION;
+        const scale = Math.sin(t * Math.PI) * 0.4 + 1;
+        letters.forEach((l, i) => {
+          l.style.opacity = '1';
+          l.style.transform = 'scale(' + (scale - i * 0.03) + ')';
+        });
+      } else {
+        letters.forEach((letter, i) => {
+          const phase = (elapsed - popTime - POP_DURATION) * state.speed + i * 0.5;
+          const normalized = Math.sin(phase);
+          const angle = lerp(normalized, state.minAngle, state.maxAngle);
+
+          const stretchPhase = (elapsed - popTime - POP_DURATION) * state.stretchSpeed + i * 0.3;
+          const stretchNormalized = Math.sin(stretchPhase);
+          const stretchScale = 1 + (stretchNormalized + 1) / 2 * (state.stretchAmount - 1);
+
+          letter.style.opacity = '1';
+          letter.style.transform = 'rotate(' + angle + 'deg) scaleY(' + stretchScale + ')';
+        });
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
