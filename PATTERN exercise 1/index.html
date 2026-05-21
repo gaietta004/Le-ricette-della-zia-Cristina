@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1024">
+<title>Vector Pattern Designer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { display: flex; height: 100vh; background: #1a1a1a; color: #eee; font-family: system-ui, sans-serif; }
+#controls { width: 260px; padding: 20px; overflow-y: auto; background: #2a2a2a; display: flex; flex-direction: column; gap: 16px; }
+#controls label { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+#controls input[type="range"] { width: 140px; }
+#canvas-wrap { flex: 1; display: flex; align-items: center; justify-content: center; }
+#canvas-wrap svg { background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.3); }
+.export-btns { display: flex; gap: 8px; margin-top: 8px; }
+.export-btns button { flex: 1; padding: 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; background: #4a4a4a; color: #eee; }
+.export-btns button:hover { background: #5a5a5a; }
+.group-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div id="controls">
+  <div class="group-label">Shape</div>
+  <label>Roundness <input type="range" id="roundness" min="0" max="100" value="40"></label>
+  <label>Size 1 <input type="range" id="size1" min="50" max="150" value="100"></label>
+  <label>Size 2 <input type="range" id="size2" min="50" max="150" value="100"></label>
+  <label>Size 3 <input type="range" id="size3" min="50" max="150" value="100"></label>
+
+  <div class="group-label">Rotation</div>
+  <label>Shape 1 <input type="range" id="rot1" min="0" max="360" value="0"></label>
+  <label>Shape 2 <input type="range" id="rot2" min="0" max="360" value="0"></label>
+  <label>Shape 3 <input type="range" id="rot3" min="0" max="360" value="0"></label>
+
+  <div class="group-label">Layout</div>
+  <label>Spacing <input type="range" id="spacing" min="0" max="100" value="30"></label>
+  <label>Scale <input type="range" id="scale" min="25" max="200" value="100"></label>
+
+  <div class="group-label">Color</div>
+  <label>Fill <input type="color" id="fillColor" value="#000000"></label>
+  <label><input type="checkbox" id="useStroke"> Stroke</label>
+  <label id="strokeColorWrap" style="display:none">Stroke <input type="color" id="strokeColor" value="#000000"></label>
+
+  <div class="group-label">Animation</div>
+  <label>Intensity <input type="range" id="animation" min="0" max="100" value="0"></label>
+  <label>Float <input type="range" id="float" min="0" max="100" value="0"></label>
+
+  <div class="group-label">Export</div>
+  <div class="export-btns">
+    <button id="exportSvg">SVG</button>
+    <button id="exportPng">PNG</button>
+  </div>
+</div>
+<div id="canvas-wrap">
+  <svg id="canvas" width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+    <g id="patternLayer"></g>
+  </svg>
+</div>
+<script>
+function organicBlob(pts, size, roundness) {
+  const s = size / 2;
+  const r = roundness / 100;
+  const t = 0.2 + r * 0.3;
+  const anchors = pts.map(p => ({
+    x: s * p.d * Math.cos(p.a),
+    y: s * p.d * Math.sin(p.a)
+  }));
+  const n = anchors.length;
+  let d = '';
+  for (let i = 0; i < n; i++) {
+    const p0 = anchors[i];
+    const p1 = anchors[(i + 1) % n];
+    const prev = anchors[(i - 1 + n) % n];
+    const next = anchors[(i + 2) % n];
+    const c1x = p0.x + (p1.x - prev.x) * t;
+    const c1y = p0.y + (p1.y - prev.y) * t;
+    const c2x = p1.x - (next.x - p0.x) * t;
+    const c2y = p1.y - (next.y - p0.y) * t;
+    if (i === 0) d += `M${p0.x},${p0.y}`;
+    d += `C${c1x},${c1y} ${c2x},${c2y} ${p1.x},${p1.y}`;
+  }
+  return d + 'Z';
+}
+
+const BLOB1 = [
+  { a: -Math.PI * 0.45, d: 0.85 },
+  { a: Math.PI * 0.10,  d: 0.70 },
+  { a: Math.PI * 0.55,  d: 0.90 },
+  { a: Math.PI * 0.85,  d: 0.65 },
+  { a: Math.PI * 1.35,  d: 0.80 },
+];
+
+const BLOB2 = [
+  { a: -Math.PI * 0.40, d: 0.78 },
+  { a: Math.PI * 0.05,  d: 0.40 },
+  { a: Math.PI * 0.50,  d: 0.75 },
+  { a: Math.PI * 0.85,  d: 0.88 },
+  { a: Math.PI * 1.10,  d: 0.68 },
+  { a: Math.PI * 1.40,  d: 0.62 },
+];
+
+const BLOB3 = [
+  { a: -Math.PI * 0.52, d: 0.88 },
+  { a: Math.PI * 0.00,  d: 0.50 },
+  { a: Math.PI * 0.30,  d: 0.82 },
+  { a: Math.PI * 0.70,  d: 0.48 },
+  { a: Math.PI * 1.00,  d: 0.76 },
+  { a: Math.PI * 1.35,  d: 0.58 },
+];
+
+function buildShapePath(type, size, roundness, rotation) {
+  let d;
+  switch(type) {
+    case 'square':    d = organicBlob(BLOB1, size, roundness); break;
+    case 'ellipse':   d = organicBlob(BLOB2, size, roundness); break;
+    case 'triangle':  d = organicBlob(BLOB3, size, roundness); break;
+  }
+  return { d, rot: rotation };
+}
+
+let animData = [];
+let animRunning = false;
+
+function animLoop(t) {
+  if (!animRunning) return;
+  const intensity = +document.getElementById('animation').value;
+  const floatAmt = +document.getElementById('float').value;
+  const time = t / 1000;
+  for (const d of animData) {
+    const rotOff = Math.sin(time * d.freqR + d.phaseR) * 80 * (intensity / 100);
+    const sc = 1 + Math.sin(time * d.freqS + d.phaseS) * 0.50 * (intensity / 100);
+    const fx = Math.sin(time * d.freqFX + d.phaseFX) * 80 * (floatAmt / 100);
+    const fy = Math.sin(time * d.freqFY + d.phaseFY) * 80 * (floatAmt / 100);
+    d.el.setAttribute('transform', `translate(${d.x + fx},${d.y + fy}) rotate(${d.baseRot + rotOff}) scale(${sc})`);
+  }
+  requestAnimationFrame(animLoop);
+}
+
+function generatePattern(params) {
+  const { roundness, size1, size2, size3, rot1, rot2, rot3, spacing, scale, fillColor, useStroke, strokeColor, animation } = params;
+
+  if (animation === 0 && +document.getElementById('float').value === 0 && animRunning) {
+    animRunning = false;
+  }
+
+  const baseSize = 110 * (scale / 100);
+
+  const sizes = [size1, size2, size3];
+  const rots = [rot1, rot2, rot3];
+  const types = ['square', 'ellipse', 'triangle'];
+
+  const shapes = types.map((t, i) => buildShapePath(t, baseSize * sizes[i] / 100, roundness, rots[i]));
+
+  const radii = sizes.map(s => (baseSize * s / 100) / 2);
+  const maxR = Math.max(...radii) * 0.95 * 1.5;
+  const gap = spacing * 0.5;
+  const h = maxR * 2 + gap;
+
+  const dx = h * Math.sqrt(3);
+  const dy = h * 1.5;
+
+  const svg = document.getElementById('patternLayer');
+  svg.innerHTML = '';
+  const viewW = 800, viewH = 800;
+  const cols = Math.ceil(viewW / dx) + 2;
+  const rows = Math.ceil(viewH / dy) + 2;
+  const offX = (viewW - dx * Math.floor(viewW / dx)) / 2;
+  const offY = (viewH - dy * Math.floor(viewH / dy)) / 2;
+  const fill = useStroke ? 'transparent' : fillColor;
+  const stroke = useStroke ? strokeColor : 'none';
+  const strokeW = useStroke ? 1.5 * (scale/100) : 0;
+
+  animData = [];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = offX + col * dx + (row % 2) * dx / 2;
+      const y = offY + row * dy;
+      if (x + h < 0 || x - h > viewW || y + h < 0 || y - h > viewH) continue;
+      const si = (row + col) % 3;
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', shapes[si].d);
+      path.setAttribute('fill', fill);
+      path.setAttribute('stroke', stroke);
+      path.setAttribute('stroke-width', strokeW);
+      path.setAttribute('transform', `translate(${x},${y}) rotate(${shapes[si].rot})`);
+      svg.appendChild(path);
+      animData.push({
+        el: path, x, y, baseRot: shapes[si].rot,
+        freqR: Math.random() * 2 + 0.5,
+        phaseR: Math.random() * Math.PI * 2,
+        freqS: Math.random() * 1.5 + 0.3,
+        phaseS: Math.random() * Math.PI * 2,
+        freqFX: Math.random() * 0.8 + 0.2,
+        phaseFX: Math.random() * Math.PI * 2,
+        freqFY: Math.random() * 0.8 + 0.2,
+        phaseFY: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+
+  if (animation > 0 && !animRunning) {
+    animRunning = true;
+    requestAnimationFrame(animLoop);
+  }
+}
+
+function getParams() {
+  return {
+    roundness: +document.getElementById('roundness').value,
+    size1: +document.getElementById('size1').value,
+    size2: +document.getElementById('size2').value,
+    size3: +document.getElementById('size3').value,
+    rot1: +document.getElementById('rot1').value,
+    rot2: +document.getElementById('rot2').value,
+    rot3: +document.getElementById('rot3').value,
+    spacing: +document.getElementById('spacing').value,
+    scale: +document.getElementById('scale').value,
+    animation: +document.getElementById('animation').value,
+    fillColor: document.getElementById('fillColor').value,
+    useStroke: document.getElementById('useStroke').checked,
+    strokeColor: document.getElementById('strokeColor').value,
+  };
+}
+
+document.getElementById('exportSvg').addEventListener('click', function() {
+  const svgEl = document.getElementById('canvas');
+  const clone = svgEl.cloneNode(true);
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  const serializer = new XMLSerializer();
+  const svgStr = serializer.serializeToString(clone);
+  const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'pattern.svg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('exportPng').addEventListener('click', function() {
+  const svgEl = document.getElementById('canvas');
+  const clone = svgEl.cloneNode(true);
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  const serializer = new XMLSerializer();
+  const svgStr = serializer.serializeToString(clone);
+  const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+  img.onload = function() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 800;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 800, 800);
+    ctx.drawImage(img, 0, 0, 800, 800);
+    canvas.toBlob(function(blob) {
+      const dlUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = dlUrl;
+      a.download = 'pattern.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(dlUrl);
+    }, 'image/png');
+    URL.revokeObjectURL(url);
+  };
+  img.src = url;
+});
+
+document.querySelectorAll('#controls input:not(#animation)').forEach(el => {
+  el.addEventListener('input', render);
+  el.addEventListener('change', render);
+});
+
+function startAnim() {
+  if (!animRunning) {
+    animRunning = true;
+    requestAnimationFrame(animLoop);
+  }
+}
+
+function stopAnim() {
+  animRunning = false;
+}
+
+document.getElementById('animation').addEventListener('input', function() {
+  if (+this.value > 0) { startAnim(); } else if (+document.getElementById('float').value === 0) { stopAnim(); }
+});
+
+document.getElementById('float').addEventListener('input', function() {
+  if (+this.value > 0) { startAnim(); } else if (+document.getElementById('animation').value === 0) { stopAnim(); }
+});
+
+document.getElementById('useStroke').addEventListener('change', function() {
+  document.getElementById('strokeColorWrap').style.display = this.checked ? '' : 'none';
+  render();
+});
+
+function render() { generatePattern(getParams()); }
+render();
+</script>
+</body>
+</html>
