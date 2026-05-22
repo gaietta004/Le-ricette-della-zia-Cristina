@@ -113,6 +113,7 @@
       padding: 20px;
       transition: transform 0.3s ease;
       cursor: grab;
+      z-index: 1;
     }
 
     .sticker:active { cursor: grabbing; }
@@ -126,7 +127,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      animation: float 3s ease-in-out infinite;
+      z-index: -1;
       pointer-events: none;
     }
     .sticker-2::before { animation-duration: 3.5s; animation-delay: 0.5s; }
@@ -280,7 +281,8 @@
       background: #f0eded;
     }
     .about-inner {
-      max-width: 600px;
+      width: 600px;
+      height: 600px;
       text-align: left;
     }
     .about-inner > p {
