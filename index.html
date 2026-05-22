@@ -241,9 +241,8 @@
 
     /* Sticker 4 — LET PALLINO SPEAK UP */
     .sticker-float-4 {
-      top: calc(35% - 110px);
-      left: calc(50% - 110px);
-      z-index: 8;
+      bottom: 15%;
+      left: 12%;
     }
     .sticker-4 {
       width: 220px;
@@ -361,34 +360,34 @@
   <section id="sticker-canvas" class="sticker-canvas">
     <h2 class="hero-h2">LLM, coding explorations of a curious graphic designer</h2>
     <div class="sticker-float sticker-float-1">
-      <a href="#" data-url="ciambella yougurt_ricetta 1/index.html" class="sticker sticker-1">
+      <div data-url="ciambella yougurt_ricetta 1/index.html" class="sticker sticker-1" tabindex="0" role="button">
         <span class="label">YOU HUNGRY?</span>
         <span class="caption">click here</span>
-      </a>
+      </div>
     </div>
     <div class="sticker-float sticker-float-2">
-      <a href="#" data-url="HANDTRACKING 1/index.html" class="sticker sticker-2">
+      <div data-url="HANDTRACKING 1/index.html" class="sticker sticker-2" tabindex="0" role="button">
         <span class="label">HELLO<br>HANDS</span>
         <span class="caption">click here</span>
-      </a>
+      </div>
     </div>
     <div class="sticker-float sticker-float-3">
-      <a href="#" data-url="TIPOGRAFIA CINETICA 1/index.html" class="sticker sticker-3">
+      <div data-url="TIPOGRAFIA CINETICA 1/index.html" class="sticker sticker-3" tabindex="0" role="button">
         <span class="label">SAY HI</span>
         <span class="caption">click here</span>
-      </a>
+      </div>
     </div>
     <div class="sticker-float sticker-float-4">
-      <a href="#" data-url="MASCHERA SONORA 1/index.html" class="sticker sticker-4">
+      <div data-url="MASCHERA SONORA 1/index.html" class="sticker sticker-4" tabindex="0" role="button">
         <span class="label">LET PALLINO<br>SPEAK UP</span>
         <span class="caption">click here</span>
-      </a>
+      </div>
     </div>
     <div class="sticker-float sticker-float-5">
-      <a href="#" data-url="PATTERN exercise 1/index.html" class="sticker sticker-5">
+      <div data-url="PATTERN exercise 1/index.html" class="sticker sticker-5" tabindex="0" role="button">
         <span class="label">MORPH YOUR PATTERN</span>
         <span class="caption">click here</span>
-      </a>
+      </div>
     </div>
   </section>
 
@@ -441,6 +440,7 @@
     }
 
     function onStart(e) {
+      e.preventDefault();
       dragged = false;
       var client = getClientXY(e);
       startX = client.x;
