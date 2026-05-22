@@ -103,6 +103,7 @@
       overflow: hidden;
     }
     .sticker {
+      position: relative;
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -352,31 +353,31 @@
   <section id="sticker-canvas" class="sticker-canvas">
     <h2 class="hero-h2">LLM, coding explorations of a curious graphic designer</h2>
     <div class="sticker-float sticker-float-1">
-      <a href="ciambella yougurt_ricetta 1/index.html" target="_blank" class="sticker sticker-1">
+      <a href="#" data-url="ciambella yougurt_ricetta 1/index.html" class="sticker sticker-1">
         <span class="label">YOU HUNGRY?</span>
         <span class="caption">click here</span>
       </a>
     </div>
     <div class="sticker-float sticker-float-2">
-      <a href="HANDTRACKING 1/index.html" target="_blank" class="sticker sticker-2">
+      <a href="#" data-url="HANDTRACKING 1/index.html" class="sticker sticker-2">
         <span class="label">HELLO<br>HANDS</span>
         <span class="caption">click here</span>
       </a>
     </div>
     <div class="sticker-float sticker-float-3">
-      <a href="TIPOGRAFIA CINETICA 1/index.html" target="_blank" class="sticker sticker-3">
+      <a href="#" data-url="TIPOGRAFIA CINETICA 1/index.html" class="sticker sticker-3">
         <span class="label">SAY HI</span>
         <span class="caption">click here</span>
       </a>
     </div>
     <div class="sticker-float sticker-float-4">
-      <a href="MASCHERA SONORA 1/index.html" target="_blank" class="sticker sticker-4">
+      <a href="#" data-url="MASCHERA SONORA 1/index.html" class="sticker sticker-4">
         <span class="label">LET PALLINO<br>SPEAK UP</span>
         <span class="caption">click here</span>
       </a>
     </div>
     <div class="sticker-float sticker-float-5">
-      <a href="PATTERN exercise 1/index.html" target="_blank" class="sticker sticker-5">
+      <a href="#" data-url="PATTERN exercise 1/index.html" class="sticker sticker-5">
         <span class="label">MORPH YOUR PATTERN</span>
         <span class="caption">click here</span>
       </a>
@@ -472,7 +473,12 @@
     document.addEventListener('touchend', onEnd);
 
     sticker.addEventListener('click', function(e) {
-      if (dragged) { e.preventDefault(); dragged = false; }
+      e.preventDefault();
+      if (!dragged) {
+        var url = sticker.getAttribute('data-url');
+        if (url) window.open(url, '_blank');
+      }
+      dragged = false;
     });
   });
 
