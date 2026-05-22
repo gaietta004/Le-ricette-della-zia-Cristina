@@ -103,7 +103,6 @@
       overflow: hidden;
     }
     .sticker {
-      position: absolute;
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -123,18 +122,15 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-5px); }
     }
-    .sticker::before {
-      content: '';
+    .sticker-float {
       position: absolute;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
+      animation: float 3s ease-in-out infinite;
     }
-    .sticker-2::before { animation-duration: 3.5s; animation-delay: 0.5s; }
-    .sticker-3::before { animation-duration: 2.8s; animation-delay: 1s; }
-    .sticker-4::before { animation-duration: 3.2s; animation-delay: 0.3s; }
-    .sticker-5::before { animation-duration: 3.7s; animation-delay: 0.8s; }
-    .sticker:hover::before { animation-play-state: paused; }
+    .sticker-float-2 { animation-duration: 3.5s; animation-delay: 0.5s; }
+    .sticker-float-3 { animation-duration: 2.8s; animation-delay: 1s; }
+    .sticker-float-4 { animation-duration: 3.2s; animation-delay: 0.3s; }
+    .sticker-float-5 { animation-duration: 3.7s; animation-delay: 0.8s; }
+    .sticker-float:hover { animation-play-state: paused; }
 
     .sticker .label {
       font-weight: 500;
@@ -149,12 +145,14 @@
     .sticker .caption:hover { text-decoration: underline; }
 
     /* Sticker 1 — YOU HUNGRY? */
+    .sticker-float-1 {
+      top: 12%;
+      left: 8%;
+    }
     .sticker-1 {
       width: 260px;
       height: 180px;
       color: #f2f26b;
-      top: 12%;
-      left: 8%;
       transform: rotate(-5deg);
     }
     .sticker-1::before {
@@ -179,12 +177,14 @@
     .sticker-1:hover { transform: rotate(-5deg) scale(1.05); }
 
     /* Sticker 2 — HELLO HANDS */
+    .sticker-float-2 {
+      top: 8%;
+      right: 10%;
+    }
     .sticker-2 {
       width: 240px;
       height: 200px;
       color: #f58a3d;
-      top: 8%;
-      right: 10%;
     }
     .sticker-2::before {
       background: #f2f26b;
@@ -206,13 +206,15 @@
     }
 
     /* Sticker 3 — SAY HI */
+    .sticker-float-3 {
+      top: calc(55% - 110px);
+      left: calc(50% - 110px);
+      z-index: 10;
+    }
     .sticker-3 {
       width: 220px;
       height: 220px;
       color: #50e664;
-      top: calc(55% - 110px);
-      left: calc(50% - 110px);
-      z-index: 10;
     }
     .sticker-3::before {
       background: #ff5ec1;
@@ -229,12 +231,14 @@
     .sticker-3:hover { transform: scale(1.05); }
 
     /* Sticker 4 — LET PALLINO SPEAK UP */
+    .sticker-float-4 {
+      bottom: 10%;
+      left: 8%;
+    }
     .sticker-4 {
       width: 220px;
       height: 220px;
       color: #ff5ec1;
-      bottom: 10%;
-      left: 8%;
     }
     .sticker-4::before {
       background: #50e664;
@@ -242,12 +246,14 @@
     }
 
     /* Sticker 5 — MORPH YOUR PATTERN */
+    .sticker-float-5 {
+      bottom: 8%;
+      right: 8%;
+    }
     .sticker-5 {
       width: 260px;
       height: 180px;
       color: #f2f26b;
-      bottom: 8%;
-      right: 8%;
       transform: rotate(4deg);
     }
     .sticker-5::before {
@@ -344,26 +350,36 @@
 
   <section id="sticker-canvas" class="sticker-canvas">
     <h2 class="hero-h2">LLM, coding explorations of a curious graphic designer</h2>
-    <a href="ciambella yougurt_ricetta 1/index.html" target="_blank" class="sticker sticker-1">
-      <span class="label">YOU HUNGRY?</span>
-      <span class="caption">click here</span>
-    </a>
-    <a href="HANDTRACKING 1/index.html" target="_blank" class="sticker sticker-2">
-      <span class="label">HELLO<br>HANDS</span>
-      <span class="caption">click here</span>
-    </a>
-    <a href="TIPOGRAFIA CINETICA 1/index.html" target="_blank" class="sticker sticker-3">
-      <span class="label">SAY HI</span>
-      <span class="caption">click here</span>
-    </a>
-    <a href="MASCHERA SONORA 1/index.html" target="_blank" class="sticker sticker-4">
-      <span class="label">LET PALLINO<br>SPEAK UP</span>
-      <span class="caption">click here</span>
-    </a>
-    <a href="PATTERN exercise 1/index.html" target="_blank" class="sticker sticker-5">
-      <span class="label">MORPH YOUR PATTERN</span>
-      <span class="caption">click here</span>
-    </a>
+    <div class="sticker-float sticker-float-1">
+      <a href="ciambella yougurt_ricetta 1/index.html" target="_blank" class="sticker sticker-1">
+        <span class="label">YOU HUNGRY?</span>
+        <span class="caption">click here</span>
+      </a>
+    </div>
+    <div class="sticker-float sticker-float-2">
+      <a href="HANDTRACKING 1/index.html" target="_blank" class="sticker sticker-2">
+        <span class="label">HELLO<br>HANDS</span>
+        <span class="caption">click here</span>
+      </a>
+    </div>
+    <div class="sticker-float sticker-float-3">
+      <a href="TIPOGRAFIA CINETICA 1/index.html" target="_blank" class="sticker sticker-3">
+        <span class="label">SAY HI</span>
+        <span class="caption">click here</span>
+      </a>
+    </div>
+    <div class="sticker-float sticker-float-4">
+      <a href="MASCHERA SONORA 1/index.html" target="_blank" class="sticker sticker-4">
+        <span class="label">LET PALLINO<br>SPEAK UP</span>
+        <span class="caption">click here</span>
+      </a>
+    </div>
+    <div class="sticker-float sticker-float-5">
+      <a href="PATTERN exercise 1/index.html" target="_blank" class="sticker sticker-5">
+        <span class="label">MORPH YOUR PATTERN</span>
+        <span class="caption">click here</span>
+      </a>
+    </div>
   </section>
 
   <section id="about" class="about-section">
@@ -396,6 +412,7 @@
   </footer>
 <script>
   document.querySelectorAll('.sticker').forEach(function(sticker) {
+    var floatWrap = sticker.parentElement;
     var isDragging = false;
     var startX, startY, origLeft, origTop;
     var dragged = false;
@@ -406,11 +423,11 @@
     }
 
     function initPos() {
-      var cs = getComputedStyle(sticker);
+      var cs = getComputedStyle(floatWrap);
       var l = parseFloat(cs.left);
       var t = parseFloat(cs.top);
-      if (!isNaN(l)) { origLeft = l; } else { origLeft = sticker.offsetLeft; }
-      if (!isNaN(t)) { origTop = t; } else { origTop = sticker.offsetTop; }
+      if (!isNaN(l)) { origLeft = l; } else { origLeft = floatWrap.offsetLeft; }
+      if (!isNaN(t)) { origTop = t; } else { origTop = floatWrap.offsetTop; }
     }
 
     function onStart(e) {
@@ -419,6 +436,7 @@
       startX = client.x;
       startY = client.y;
       initPos();
+      floatWrap.style.animationPlayState = 'paused';
       sticker.style.cursor = 'grabbing';
       isDragging = true;
     }
@@ -431,16 +449,17 @@
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) dragged = true;
       if (dragged) {
         e.preventDefault();
-        sticker.style.left = (origLeft + dx) + 'px';
-        sticker.style.top = (origTop + dy) + 'px';
-        sticker.style.right = 'auto';
-        sticker.style.bottom = 'auto';
+        floatWrap.style.left = (origLeft + dx) + 'px';
+        floatWrap.style.top = (origTop + dy) + 'px';
+        floatWrap.style.right = 'auto';
+        floatWrap.style.bottom = 'auto';
       }
     }
 
     function onEnd() {
       isDragging = false;
       sticker.style.cursor = '';
+      floatWrap.style.animationPlayState = '';
     }
 
     sticker.addEventListener('mousedown', onStart);
