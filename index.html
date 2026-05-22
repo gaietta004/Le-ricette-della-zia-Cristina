@@ -119,6 +119,14 @@
     .sticker:active { cursor: grabbing; }
     .sticker:hover { transform: scale(1.05); }
 
+    .sticker::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-5px); }
