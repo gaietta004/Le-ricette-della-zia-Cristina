@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1024">
+<title>Organic Pattern Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Zalando+Sans+Expanded:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="controls">
+  <div class="group-label">Shape 1</div>
+  <label>Roundness <span class="val" id="val-roundness1">40</span></label>
+  <input type="range" id="roundness1" min="0" max="100" value="40">
+  <label>Size <span class="val" id="val-size1">100</span></label>
+  <input type="range" id="size1" min="50" max="150" value="100">
+  <label>Rotation <span class="val" id="val-rot1">0</span></label>
+  <input type="range" id="rot1" min="0" max="360" value="0">
+
+  <div class="group-label">Shape 2</div>
+  <label>Roundness <span class="val" id="val-roundness2">40</span></label>
+  <input type="range" id="roundness2" min="0" max="100" value="40">
+  <label>Size <span class="val" id="val-size2">100</span></label>
+  <input type="range" id="size2" min="50" max="150" value="100">
+  <label>Rotation <span class="val" id="val-rot2">0</span></label>
+  <input type="range" id="rot2" min="0" max="360" value="0">
+
+  <div class="group-label">Shape 3</div>
+  <label>Roundness <span class="val" id="val-roundness3">40</span></label>
+  <input type="range" id="roundness3" min="0" max="100" value="40">
+  <label>Size <span class="val" id="val-size3">100</span></label>
+  <input type="range" id="size3" min="50" max="150" value="100">
+  <label>Rotation <span class="val" id="val-rot3">0</span></label>
+  <input type="range" id="rot3" min="0" max="360" value="0">
+
+  <div class="group-label">Layout</div>
+  <label>Spacing <span class="val" id="val-spacing">30</span></label>
+  <input type="range" id="spacing" min="0" max="100" value="30">
+  <label>Scale <span class="val" id="val-scale">100</span></label>
+  <input type="range" id="scale" min="25" max="200" value="100">
+
+  <div class="group-label">Export</div>
+  <div class="export-btns">
+    <button id="exportSvg">SVG</button>
+    <button id="exportPng">PNG</button>
+  </div>
+</div>
+<div id="canvas-wrap">
+  <svg id="canvas" width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+    <g id="patternLayer"></g>
+  </svg>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

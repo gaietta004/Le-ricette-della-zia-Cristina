@@ -8,6 +8,23 @@ A single-page web tool that displays the word "CIAO" with each letter oscillatin
 
 **HTML DOM + requestAnimationFrame** — each letter is a `<span>` element animated in a JS render loop. No external dependencies, no build step.
 
+## Style Guide Application (v2)
+
+**Colors (dark theme kept):**
+- Background: `#1a1a1a`, text: `#fff`
+- Buttons use sticker colors: Restart = `#50e664` (green), Goodbye = `#ff5ec1` (magenta), Say Hi = `#f2f26b` (yellow)
+- Button text: `#1f0001` for contrast
+- Slider value displays and thumbs match per-slider accent colors
+
+**Typography:**
+- Slider labels: Inter (body substitute for Zalando Sans Expanded)
+- Button text + value displays: VT323 (caption style, 16px Regular 200)
+- Main "CIAO" letters: keep Arial Black (unchanged)
+
+**Interactive:**
+- Buttons: scale transform on hover (sticker interactive status)
+- Smooth `transition: transform 0.2s`
+
 ## Architecture
 
 Single file: `index.html` with embedded CSS and JS.

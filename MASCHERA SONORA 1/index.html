@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pallino Parlante</title>
   <script src="https://unpkg.com/flubber@0.3.0"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -38,17 +41,21 @@
       gap: 8px;
     }
     #startBtn {
-      padding: 12px 24px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background: #e94560;
-      color: #fff;
+      padding: 12px 28px;
+      font-size: 22px;
+      font-weight: 500;
+      font-family: 'Zalando Sans Expanded', system-ui, sans-serif;
+      border: 2px solid #fff;
+      border-radius: 4px;
+      background: #f2f26b;
+      color: #1f0001;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transform: rotate(-1.5deg);
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 6px 6px 0 #f58a3d;
     }
-    #startBtn:hover { opacity: 0.85; }
-    #startBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #startBtn:hover { transform: rotate(-1.5deg) scale(1.08); }
+    #startBtn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
     #levelDisplay {
       font-size: 14px;
       font-family: monospace;
@@ -61,15 +68,22 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13px;
-      color: #333;
-      background: rgba(255,255,255,0.85);
-      padding: 6px 12px;
-      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 200;
+      font-family: 'VT323', system-ui, sans-serif;
+      color: #1f0001;
+      background: #ff5ec1;
+      padding: 8px 16px;
+      border: 2px solid #fff;
+      border-radius: 4px;
+      box-shadow: 6px 6px 0 #50e664;
+      transform: rotate(1deg);
       z-index: 10;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    #sensitivity-row input { width: 120px; }
-    #sensitivity-value { min-width: 40px; text-align: right; font-family: monospace; }
+    #sensitivity-row:hover { transform: rotate(1deg) scale(1.05); }
+    #sensitivity-row input { width: 120px; accent-color: #f2f26b; }
+    #sensitivity-value { min-width: 40px; text-align: right; font-family: 'VT323', system-ui, sans-serif; font-weight: 200; }
   </style>
 </head>
 <body>

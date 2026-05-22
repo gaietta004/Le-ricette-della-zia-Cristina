@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=VT323&display=swap" rel="stylesheet">
   <title>CIAO — Kinetic Typography</title>
   <style>
     * {
@@ -46,7 +47,7 @@
     }
 
     #controls label {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 0.85rem;
       display: flex;
       flex-direction: column;
@@ -59,8 +60,38 @@
     }
 
     #controls span {
-      font-family: monospace;
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
       text-align: right;
+    }
+
+    #speed-value { color: #50e664; }
+    input#speed::-webkit-slider-thumb { background: #50e664; }
+    #minAngle-value { color: #f58a3d; }
+    input#minAngle::-webkit-slider-thumb { background: #f58a3d; }
+    #maxAngle-value { color: #f2f26b; }
+    input#maxAngle::-webkit-slider-thumb { background: #f2f26b; }
+    #stretchAmount-value { color: #ff5ec1; }
+    input#stretchAmount::-webkit-slider-thumb { background: #ff5ec1; }
+    #stretchSpeed-value { color: #50e664; }
+    input#stretchSpeed::-webkit-slider-thumb { background: #50e664; }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #1a1a1a;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #1a1a1a;
     }
 
     #goodbye-btn {
@@ -68,17 +99,18 @@
       bottom: 1.5rem;
       right: 1.5rem;
       padding: 0.5rem 1.5rem;
-      font-size: 1rem;
-      font-family: Arial, sans-serif;
-      background: #444;
-      color: #fff;
-      border: 1px solid #666;
+      font-size: 1.2rem;
+      font-family: 'VT323', monospace;
+      background: #ff5ec1;
+      color: #1f0001;
+      border: none;
       border-radius: 4px;
       cursor: pointer;
+      transition: transform 0.2s;
     }
 
     #goodbye-btn:hover {
-      background: #666;
+      transform: scale(1.1);
     }
 
     #restart-btn {
@@ -86,17 +118,18 @@
       top: 1rem;
       right: 1rem;
       padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-      font-family: Arial, sans-serif;
-      background: #444;
-      color: #fff;
-      border: 1px solid #666;
+      font-size: 1.2rem;
+      font-family: 'VT323', monospace;
+      background: #50e664;
+      color: #1f0001;
+      border: none;
       border-radius: 4px;
       cursor: pointer;
+      transition: transform 0.2s;
     }
 
     #restart-btn:hover {
-      background: #666;
+      transform: scale(1.1);
     }
 
     #say-hi-btn {
@@ -112,6 +145,10 @@
       text-align: center;
     }
 
+    #say-hi-btn:hover .hand {
+      animation-duration: 0.6s;
+    }
+
     #say-hi-btn .hand {
       display: inline-block;
       font-size: 6rem;
@@ -121,24 +158,20 @@
 
     #say-hi-btn .label {
       display: block;
-      font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
-      font-size: 1.5rem;
-      color: #fff;
+      font-family: 'VT323', monospace;
+      font-size: 2rem;
+      color: #f0eded;
       margin-top: 0.5rem;
-    }
-
-    #say-hi-btn:hover .hand {
-      animation-duration: 0.6s;
-    }
-
-    @keyframes wave {
-      0%, 100% { transform: rotate(-15deg); }
-      50% { transform: rotate(15deg); }
     }
 
     #say-hi-btn.hidden {
       opacity: 0;
       pointer-events: none;
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: rotate(-15deg); }
+      50% { transform: rotate(15deg); }
     }
   </style>
 </head>
