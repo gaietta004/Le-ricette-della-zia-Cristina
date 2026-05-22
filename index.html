@@ -114,8 +114,27 @@
       transition: transform 0.3s ease;
       cursor: grab;
     }
+
     .sticker:active { cursor: grabbing; }
     .sticker:hover { transform: scale(1.05); }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    .sticker::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      animation: float 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .sticker-2::before { animation-duration: 3.5s; animation-delay: 0.5s; }
+    .sticker-3::before { animation-duration: 2.8s; animation-delay: 1s; }
+    .sticker-4::before { animation-duration: 3.2s; animation-delay: 0.3s; }
+    .sticker-5::before { animation-duration: 3.7s; animation-delay: 0.8s; }
+    .sticker:hover::before { animation-play-state: paused; }
+
     .sticker .label {
       font-weight: 500;
       font-size: 22px;
@@ -132,11 +151,13 @@
     .sticker-1 {
       width: 260px;
       height: 180px;
-      background: #f58a3d;
       color: #f2f26b;
       top: 12%;
       left: 8%;
       transform: rotate(-5deg);
+    }
+    .sticker-1::before {
+      background: #f58a3d;
       clip-path: polygon(
         2% 2%, 5% 8%, 10% 3%, 14% 10%, 19% 4%, 24% 11%, 29% 5%,
         34% 12%, 39% 4%, 44% 10%, 49% 5%, 54% 12%, 59% 4%,
@@ -160,10 +181,12 @@
     .sticker-2 {
       width: 240px;
       height: 200px;
-      background: #f2f26b;
       color: #f58a3d;
       top: 8%;
       right: 10%;
+    }
+    .sticker-2::before {
+      background: #f2f26b;
       clip-path: path('M120,0 C140,0 160,20 160,40 C180,30 200,40 210,60 C220,80 210,100 200,110 C220,120 230,140 220,160 C210,180 190,190 170,195 C160,200 140,200 120,200 C100,200 80,200 70,195 C50,190 30,180 20,160 C10,140 20,120 40,110 C30,100 20,80 30,60 C40,40 60,30 80,40 C80,20 100,0 120,0 Z');
     }
 
@@ -185,11 +208,13 @@
     .sticker-3 {
       width: 220px;
       height: 220px;
-      background: #ff5ec1;
       color: #50e664;
       top: calc(55% - 110px);
       left: calc(50% - 110px);
       z-index: 10;
+    }
+    .sticker-3::before {
+      background: #ff5ec1;
       clip-path: polygon(
         50% 0%, 56% 18%, 75% 5%, 68% 24%, 88% 15%,
         78% 33%, 98% 30%, 85% 45%, 100% 50%, 85% 55%,
@@ -206,10 +231,12 @@
     .sticker-4 {
       width: 220px;
       height: 220px;
-      background: #50e664;
       color: #ff5ec1;
       bottom: 10%;
       left: 8%;
+    }
+    .sticker-4::before {
+      background: #50e664;
       border-radius: 50%;
     }
 
@@ -217,11 +244,13 @@
     .sticker-5 {
       width: 260px;
       height: 180px;
-      background: #f58a3d;
       color: #f2f26b;
       bottom: 8%;
       right: 8%;
       transform: rotate(4deg);
+    }
+    .sticker-5::before {
+      background: #f58a3d;
       clip-path: polygon(
         2% 2%, 5% 8%, 10% 3%, 14% 10%, 19% 4%, 24% 11%, 29% 5%,
         34% 12%, 39% 4%, 44% 10%, 49% 5%, 54% 12%, 59% 4%,

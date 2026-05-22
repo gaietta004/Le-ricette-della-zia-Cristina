@@ -33,4 +33,6 @@ hoover on Caption - underline
 
 STICKER INTERACTIVE STATUS 
 Hoover status - transform: scale
+Click drag and drop 
+
 
