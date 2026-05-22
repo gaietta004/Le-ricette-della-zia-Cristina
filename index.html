@@ -452,7 +452,7 @@
     document.addEventListener('touchend', onEnd);
 
     sticker.addEventListener('click', function(e) {
-      if (dragged) e.preventDefault();
+      if (dragged) { e.preventDefault(); dragged = false; }
     });
   });
 
